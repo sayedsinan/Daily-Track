@@ -2,6 +2,8 @@
 
 A comprehensive to-do app built with Flutter featuring user authentication, local SQLite storage, and beautiful UI design.
 
+Demo Video Link:https://drive.google.com/file/d/147r3b0EY0_tQB2Z3w-AL6j3uJ2hVTFxK/view?usp=sharing
+
 ## 🌟 Features
 
 ### 🔐 **Authentication System**
@@ -14,7 +16,7 @@ A comprehensive to-do app built with Flutter featuring user authentication, loca
 ### 📱 **Task Management**
 - Complete CRUD operations (Create, Read, Update, Delete)
 - Mark tasks as complete/incomplete
-- Visual progress tracking with animated progress bar
+- Visual progress tracking with an animated progress bar
 - Real-time task counter
 - Pull-to-refresh functionality
 
