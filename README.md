@@ -126,7 +126,7 @@ test/                      # Test files
 ├── models/               # Model tests
 ├── services/             # Service tests
 ├── database/             # Database tests
-└── widgets/              # Widget tests
+
 ```
 
 ## 🔥 Key Features Implementation
@@ -179,7 +179,7 @@ Run specific test suites:
 ```bash
 flutter test test/models/      # Model tests
 flutter test test/services/    # Service tests  
-flutter test test/widgets/     # Widget tests
+
 ```
 
 ## 🎨 Design System
