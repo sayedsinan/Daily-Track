@@ -1,11 +1,10 @@
-import 'package:daily_track/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../screens/home_screen.dart';
+import '../screens/auth/login_screen.dart';
 
 class AuthActions {
- 
   static Future<void> signInUser({
     required BuildContext context,
     required String email,
@@ -21,6 +20,11 @@ class AuthActions {
           backgroundColor: Colors.red,
         ),
       );
+    } else if (success && context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
     }
   }
 
@@ -31,11 +35,7 @@ class AuthActions {
     required String password,
   }) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.signUp(
-      name: name,
-      email: email,
-      password: password,
-    );
+    final success = await authProvider.signUp(name: name, email: email, password: password);
 
     if (success && context.mounted) {
       Navigator.pushReplacement(
@@ -52,7 +52,6 @@ class AuthActions {
     }
   }
 
-
   static Future<void> resetPassword({
     required BuildContext context,
     required String email,
@@ -65,9 +64,7 @@ class AuthActions {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success
-                ? 'Password reset successfully!'
-                : 'Email not found. Please check your email address.',
+            success ? 'Password reset successfully!' : 'Email not found.',
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -76,58 +73,56 @@ class AuthActions {
     }
   }
 
-
   static Future<void> signOutUser(BuildContext context) async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     authProvider.signOut();
-   Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (context) => const LoginScreen(),
-  ),
-);
 
+    if (context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    }
   }
 
   static void showUserProfile(BuildContext context, AuthProvider authProvider) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text(
-        'User Profile',
-        style: TextStyle(color: Color(0xFF14B8A6)),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.person, color: Color(0xFF14B8A6)),
-              const SizedBox(width: 12),
-              Text(authProvider.currentUser?.name ?? 'Unknown'),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              const Icon(Icons.email, color: Color(0xFF14B8A6)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(authProvider.currentUser?.email ?? 'Unknown'),
-              ),
-            ],
-          ),
+    final user = authProvider.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('User data is loading.')),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('User Profile', style: TextStyle(color: Color(0xFF14B8A6))),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.person, color: Color(0xFF14B8A6)),
+                const SizedBox(width: 12),
+                Text(user.name),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                const Icon(Icons.email, color: Color(0xFF14B8A6)),
+                const SizedBox(width: 12),
+                Expanded(child: Text(user.email)),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
         ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Close'),
-        ),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 }

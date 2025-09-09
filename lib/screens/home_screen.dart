@@ -1,21 +1,18 @@
-import 'package:daily_track/services/task_actions.dart';
-import 'package:daily_track/utils/support.dart';
-import 'package:daily_track/widgets/progress_indicatior.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../providers/task_provider.dart';
 import '../widgets/task_card.dart';
 import '../widgets/task_dialog.dart';
-
+import '../providers/task_provider.dart';
+import '../services/task_actions.dart';
+import '../widgets/progress_indicatior.dart';
+import '../utils/support.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-    
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => TaskActions.loadUserTasks(context),
     );
@@ -33,17 +30,10 @@ class HomeScreen extends StatelessWidget {
                 color: Color(0xFF14B8A6),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.calendar_today,
-                color: Colors.white,
-                size: 16,
-              ),
+              child: const Icon(Icons.calendar_today, color: Colors.white, size: 16),
             ),
             const SizedBox(width: 12),
-            const Text(
-              'Daily Track',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-            ),
+            const Text('Daily Track', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
           ],
         ),
         backgroundColor: Colors.white,
@@ -52,6 +42,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           Consumer<AuthProvider>(
             builder: (context, authProvider, child) {
+              final user = authProvider.currentUser;
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'profile') {
@@ -67,7 +58,7 @@ class HomeScreen extends StatelessWidget {
                       children: [
                         const Icon(Icons.person, color: Color(0xFF14B8A6)),
                         const SizedBox(width: 12),
-                        Text(authProvider.currentUser?.name ?? 'Profile'),
+                        Text(user?.name ?? 'Profile'),
                       ],
                     ),
                   ),
@@ -88,14 +79,8 @@ class HomeScreen extends StatelessWidget {
                     backgroundColor: const Color(0xFF14B8A6),
                     radius: 18,
                     child: Text(
-                      authProvider.currentUser?.name
-                              .substring(0, 1)
-                              .toUpperCase() ??
-                          'U',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      user?.name.substring(0, 1).toUpperCase() ?? 'U',
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -121,19 +106,9 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.task_alt, size: 64, color: Color(0xFF14B8A6)),
                   SizedBox(height: 16),
-                  Text(
-                    'No tasks yet!',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF14B8A6),
-                    ),
-                  ),
+                  Text('No tasks yet!', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF14B8A6))),
                   SizedBox(height: 8),
-                  Text(
-                    'Tap the + button to add your first task',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
-                  ),
+                  Text('Tap the + button to add your first task', style: TextStyle(fontSize: 16, color: Colors.grey)),
                 ],
               ),
             );
@@ -168,6 +143,7 @@ class HomeScreen extends StatelessWidget {
         builder: (context, authProvider, child) {
           return FloatingActionButton(
             onPressed: () {
+              if (authProvider.currentUser == null) return;
               showDialog(
                 context: context,
                 builder: (context) => TaskDialog(
